@@ -10,7 +10,11 @@ async function handleSignin() {
         body: JSON.stringify(signupData)
     }
     )
-    console.log(reponse)
+    if (reponse.status == 200) {
+        window.location.replace('http://127.0.0.1:5500/login.html')
+    } else {
+        alert(reponse.status)
+    }
 
 }
 
