@@ -8,11 +8,19 @@ async function handleSignin() {
         password: document.getElementById("floatingPassword").value
     }
 
-    const reponse = await fetch(`${backend_base_url}/singup`, {
+    const reponse = await fetch(`${backend_base_url}/signup`, {
         method: 'POST',
         body: JSON.stringify(signupData)
     }
     )
+
+    console.log(reponse)
+
+    if (reponse.status == 200) {
+        window.location.replace(`${frontend_base_url}/login.html`)
+    } else {
+        alert(reponse.status)
+    }
     // if (reponse.status == 200) {
     //     alert('회원가입에 성공하였습니다!');
     //     window.location.replace(`${frontend_base_url}/login.html`)
@@ -27,6 +35,7 @@ async function handleSignin() {
 
 async function handlelogin() {
 
+
     const loginData = {
         email: document.getElementById("floatingInput").value,
         password: document.getElementById("floatingPassword").value
@@ -36,17 +45,17 @@ async function handlelogin() {
         method: 'POST',
         body: JSON.stringify(loginData)
     })
+    console.log(reponse)
     reponse_json = await reponse.json()
     console.log(reponse_json)
     localStorage.setItem("token", reponse_json.token)
-    // if (response.status == 201) {
-    //     alert('로그인에 성공하였습니다!');
-    //     window.location.replace(`${frontend_base_url}/index.html`);
-    // } else {
-    //     alert('로그인에 실패했습니다. 재시도해주세요!');
-    //     window.location.reload();
-    // }
 
+    if (reponse.status == 200) {
+        alert('로그인 완료')
+        window.location.replace(`${frontend_base_url}/index.html`);
+    } else {
+        alert('아이디나 비밀번호가 옳지 않습니다.')
+    }
 }
 
 
@@ -57,11 +66,16 @@ async function getName() {
             'Authorization': localStorage.getItem("token")
         }
     })
-    reponse_json = await reponse.json()
-    console.log(reponse_json)
 
-    const username = document.getElementById("username")
-    username.innerText = reponse_json.email
+    if (reponse.status == 200) {
+        reponse_json = await reponse.json()
+        console.log(reponse_json)
+        return reponse_json.email
+    }
+    else {
+        return null
+    }
+
 }
 
 async function postArticle(title, content) {
@@ -101,4 +115,28 @@ async function getArticles() {
     reponse_json = await reponse.json()
 
     return reponse_json.articles
+}
+
+function logout() {
+    localStorage.removeItem("token")
+    window.location.replace(`${frontend_base_url}/`);
+}
+
+function articleDetail(article_id) {
+    console.log(article_id)
+    const url = `${frontend_base_url}/article_detail.html?id=${article_id}`
+    location.href = url
+
+}
+
+async function getArticleDetail(article_id) {
+    const reponse = await fetch(`${backend_base_url}/article/${article_id}`, {
+        method: "GET"
+    }
+    )
+    reponse_json = await reponse.json()
+    console.log(reponse_json)
+
+    return reponse_json.article
+
 }
