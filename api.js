@@ -70,7 +70,7 @@ async function getName() {
     if (reponse.status == 200) {
         reponse_json = await reponse.json()
         console.log(reponse_json)
-        return reponse_json.email
+        return reponse_json
     }
     else {
         return null
@@ -139,4 +139,44 @@ async function getArticleDetail(article_id) {
 
     return reponse_json.article
 
+}
+
+async function patchArticle(article_id, title, content) {
+    const articleData = {
+        "title": title,
+        "content": content
+    }
+
+    const reponse = await fetch(`${backend_base_url}/article/${article_id}`, {
+        headers: {
+            'Authorization': localStorage.getItem("token")
+        },
+        method: "PATCH",
+        body: JSON.stringify(articleData)
+    }
+    )
+
+    if (reponse.status == 200) {
+        reponse_json = await reponse.json()
+        return reponse_json
+    } else {
+        alert(reponse.status)
+    }
+}
+
+async function deleteArticle() {
+    const reponse = await fetch(`${backend_base_url}/article/${article_id}`, {
+        headers: {
+            'Authorization': localStorage.getItem("token")
+        },
+        method: "DELETE"
+    }
+    )
+
+    if (reponse.status == 200) {
+        window.location.replace(`${frontend_base_url}/`);
+
+    } else {
+        alert(reponse.status)
+    }
 }
